@@ -1,0 +1,25 @@
+name: Package
+
+on:
+  workflow_run:
+    workflows: ["Ruby"]
+    branches: ["master"]
+    types:
+      - completed
+
+jobs:
+  build:
+    name: Build & Upload Gem
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Ruby 2.6
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.6.x
+    - name: Build gem
+      run: |
+         gem build *.gemspec
+    - name: Upload gem
+      run: |
+        echo ":github: Bearer ${{ secrets.GITHUB_TOKEN }}" >> ~/.gem/credentials
+        gem push --key github --host https://rubygems.pkg.github.com/jkenn99 vagrant-aws-*.gem
