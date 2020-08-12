@@ -202,6 +202,16 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :aws_profile
 
+      # An Elastic File System to mount on the machine
+      #
+      # @return [Hash<String, String>]
+      attr_accessor :efs_mount
+
+      # An EBS Volume to attach, format, and mount on the machine
+      #
+      # @return [Hash<String, String, String, String>]
+      attr_accessor :ebs_volume
+
       def initialize(region_specific=false)
         @access_key_id             = UNSET_VALUE
         @ami                       = UNSET_VALUE
@@ -490,14 +500,14 @@ module VagrantPlugins
 
 
     class Credentials < Vagrant.plugin("2", :config)
-      # This module reads AWS config and credentials. 
+      # This module reads AWS config and credentials.
       # Behaviour aims to mimic what is described in AWS documentation:
       # http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
       # http://docs.aws.amazon.com/cli/latest/topic/config-vars.html
       # Which is the following (stopping at the first successful case):
       # 1) read config and credentials from environment variables
       # 2) read config and credentials from files at location defined by environment variables
-      # 3) read config and credentials from files at default location 
+      # 3) read config and credentials from files at default location
       #
       # The mandatory fields for a successful "get credentials" are the id and the secret keys.
       # Region is not required since Config#finalize falls back to sensible defaults.
@@ -547,14 +557,12 @@ module VagrantPlugins
         doc_cfg = IniParse.parse(data)
         aws_region = doc_cfg[ini_profile]['region']
 
-        # determine section in credentials ini file
-        ini_profile = profile
         # get info from credentials ini file for selected profile
         data = File.read(aws_creds)
         doc_cfg = IniParse.parse(data)
-        aws_id = doc_cfg[ini_profile]['aws_access_key_id']
-        aws_secret = doc_cfg[ini_profile]['aws_secret_access_key']
-        aws_token = doc_cfg[ini_profile]['aws_session_token']
+        aws_id = doc_cfg[profile]['aws_access_key_id']
+        aws_secret = doc_cfg[profile]['aws_secret_access_key']
+        aws_token = doc_cfg[profile]['aws_session_token']
 
         return aws_region, aws_id, aws_secret, aws_token
       end
