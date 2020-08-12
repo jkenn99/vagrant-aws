@@ -7,22 +7,30 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-    name: Test
+  test:
+    name: Rake
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby
-    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-    # change this to (see https://github.com/ruby/setup-ruby#versioning):
-      uses: ruby/setup-ruby@v1
+    - name: Set up Ruby 2.6
+      uses: actions/setup-ruby@v1
       with:
-        ruby-version: 2.6
+        ruby-version: 2.6.x
     - name: Install dependencies
       run: bundle install
     - name: Run tests
       run: bundle exec rake
+  build:
+    name: Build + Publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby 2.6
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.6.x
     - name: Build gem
       run: |
          gem build *.gemspec
