@@ -17,6 +17,8 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: 2.6.x
+    - name: Install system dependencies
+      run: sudo apt-get install build-essential libxml2-dev zlib1g-dev libcurl4-gnutls-dev
     - name: Install dependencies
       run: bundle install
     - name: Run tests
