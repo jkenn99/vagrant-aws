@@ -9,6 +9,16 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :access_key_id
 
+      # An AMI name to lookup.
+      #
+      # @return [String]
+      attr_accessor :ami_name
+
+      # The owner account ID to use for AMI lookups.
+      #
+      # @return [String]
+      attr_accessor :ami_owner
+
       # The ID of the AMI to use.
       #
       # @return [String]
@@ -214,6 +224,8 @@ module VagrantPlugins
 
       def initialize(region_specific=false)
         @access_key_id             = UNSET_VALUE
+        @ami_name                  = UNSET_VALUE
+        @ami_owner                 = UNSET_VALUE
         @ami                       = UNSET_VALUE
         @availability_zone         = UNSET_VALUE
         @instance_check_interval   = UNSET_VALUE
@@ -355,6 +367,8 @@ module VagrantPlugins
         @session_token = nil if @session_token == UNSET_VALUE
 
         # AMI must be nil, since we can't default that
+        @ami_name = nil if @ami_name == UNSET_VALUE
+        @ami_owner = nil if @ami_owner == UNSET_VALUE
         @ami = nil if @ami == UNSET_VALUE
 
         # Set the default timeout for waiting for an instance to be ready
@@ -481,7 +495,8 @@ module VagrantPlugins
             errors << I18n.t("vagrant_aws.config.subnet_id_required_with_public_ip")
           end
 
-          errors << I18n.t("vagrant_aws.config.ami_required", :region => @region)  if config.ami.nil?
+          errors << I18n.t("vagrant_aws.config.ami_required", :region => @region)  if config.ami.nil? && config.ami_owner.nil? && config.ami_name.nil?
+          errors << I18n.t("vagrant_aws.config.ami_ownwer_required", :region => @region)  if config.ami_owner.nil? && !config.ami_name.nil?
         end
 
         { "AWS Provider" => errors }

@@ -116,7 +116,9 @@ provider-specific configuration for this provider.
 This provider exposes quite a few provider-specific configuration options:
 
 * `access_key_id` - The access key for accessing AWS
-* `ami` - The AMI id to boot, such as "ami-12345678"
+* `ami_name` - An AMI name to lookup, such as "amzn2-ami-hvm-*". If nil, ami must be specified.
+* `ami_owner` - The owner account ID to use for AMI lookups. If nil, ami must be specified.
+* `ami` - A specific AMI id to use, such as "ami-12345678". This is used when ami_name and ami_owner are not specified, or a matching AMI cannot be found.
 * `availability_zone` - The availability zone within the region to launch
   the instance. If nil, it will use the default set by Amazon.
 * `aws_profile` - AWS profile in your config files. Defaults to *default*.
@@ -137,7 +139,7 @@ This provider exposes quite a few provider-specific configuration options:
 * `session_token` - The session token provided by STS
 * `private_ip_address` - The private IP address to assign to an instance
   within a [VPC](http://aws.amazon.com/vpc/)
-* `elastic_ip` - Can be set to 'true', or to an existing Elastic IP address. 
+* `elastic_ip` - Can be set to 'true', or to an existing Elastic IP address.
   If true, allocate a new Elastic IP address to the instance. If set
   to an existing Elastic IP address, assign the address to the instance.
 * `region` - The region to start the instance in, such as "us-east-1"
@@ -316,7 +318,7 @@ $ bundle exec rake
 If those pass, you're ready to start developing the plugin. You can test
 the plugin without installing it into your Vagrant environment by just
 creating a `Vagrantfile` in the top level of this directory (it is gitignored)
-and add the following line to your `Vagrantfile` 
+and add the following line to your `Vagrantfile`
 ```ruby
 Vagrant.require_plugin "vagrant-aws"
 ```
