@@ -26,7 +26,10 @@ module VagrantPlugins
 
           # Get the configs
           region_config         = env[:machine].provider_config.get_region_config(region)
-          ami                   = region_config.ami
+          ami_name              = region_config.ami_name
+          ami_owner             = region_config.ami_owner
+          ami                   = lookup_ami_id(env, ami_name, ami_owner) if ami_name && ami_owner
+          ami                   ||= region_config.ami
           availability_zone     = region_config.availability_zone
           placement_group       = region_config.placement_group
           instance_type         = region_config.instance_type
@@ -291,6 +294,20 @@ module VagrantPlugins
             ip_file.open('w+') do |f|
               f.write(h.to_json)
             end
+          end
+        end
+
+        def lookup_ami_id(env, ami_name, ami_owner)
+          filters = {
+            "name" => ami_name,
+            "owner-id" => ami_owner,
+            "state" => "available"
+          }
+          images = env[:aws_compute].images.all(filters).sort_by { |image| image.creation_date }.reverse
+          unless images.empty?
+            images.first.id
+          else
+            raise Errors::FogError, :message => "AMI not found with name '#{ami_name}' and owner '#{ami_owner}'."
           end
         end
 

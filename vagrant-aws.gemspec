@@ -11,11 +11,10 @@ Gem::Specification.new do |s|
   s.authors       = "Mitchell Hashimoto"
   s.email         = "mitchell@hashicorp.com"
   s.homepage      = "http://www.vagrantup.com"
-  s.summary       = "Enables Vagrant to manage machines in EC2 and VPC."
-  s.description   = "Enables Vagrant to manage machines in EC2 and VPC."
+  s.summary       = "Vagrant plugin for AWS EC2."
+  s.description   = "Enables Vagrant to manage machines in AWS EC2."
 
   s.required_rubygems_version = ">= 1.3.6"
-  s.rubyforge_project         = "vagrant-aws"
 
   s.add_runtime_dependency "fog-aws", "~> 3.0"
   s.add_runtime_dependency "iniparse", "~> 1.4", ">= 1.4.2"
